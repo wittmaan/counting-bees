@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python ../python/CSVCreator.py -i h:/GoogleDrive/python/counting-bees/data/resized/annotations -o h:/GoogleDrive/python/counting-bees/data/resized
+python ../python/CSVCreator.py -i ../../../data/resized/annotations -o ../../../data/resized

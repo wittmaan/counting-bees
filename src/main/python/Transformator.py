@@ -5,8 +5,7 @@ import numpy as np
 import xml.etree.ElementTree as etree
 import os
 
-logging.config.fileConfig(fname='../resources/logging.conf',
-                          disable_existing_loggers=False)
+logging.config.fileConfig(fname='../resources/logging.conf', disable_existing_loggers=False)
 log = logging.getLogger('transformator')
 
 
@@ -15,20 +14,13 @@ class Transformator(object):
         self.output_path = output_path
         self.output_annotation_path = os.path.join(output_path, 'annotations')
         self.output_images_path = os.path.join(output_path, 'images')
-        for p in [
-                self.output_path, self.output_annotation_path,
-                self.output_images_path
-        ]:
+        for p in [self.output_path, self.output_annotation_path, self.output_images_path]:
             if not os.path.exists(p):
                 os.makedirs(p)
 
         log.info('Got this input_path: {}'.format(input_path))
-        self.image_files = [
-            f for f in os.listdir(input_path) if f.endswith('jpg')
-        ]
-        self.annotation_files = [
-            f for f in os.listdir(annotation_path) if f.endswith('xml')
-        ]
+        self.image_files = [f for f in os.listdir(input_path) if f.endswith('jpg')]
+        self.annotation_files = [f for f in os.listdir(annotation_path) if f.endswith('xml')]
         self.input_path = input_path
         self.annotation_path = annotation_path
         self.width = width
@@ -39,17 +31,13 @@ class Transformator(object):
 
             if annotation_file in self.annotation_files:
                 log.info('resizing image {}'.format(image_file))
-                dim, ratio = Transformator.resize_image(
-                    os.path.join(self.input_path, image_file),
-                    os.path.join(self.output_images_path, image_file),
-                    self.width)
+                dim, ratio = Transformator.resize_image(os.path.join(self.input_path, image_file),
+                                                        os.path.join(self.output_images_path, image_file), self.width)
 
                 log.info('resizing annotation file {}'.format(annotation_file))
-                Transformator.resize_annotation(
-                    os.path.join(self.annotation_path, annotation_file),
-                    os.path.join(self.output_annotation_path, annotation_file),
-                    os.path.join(self.output_images_path, image_file), dim,
-                    ratio)
+                Transformator.resize_annotation(os.path.join(self.annotation_path, annotation_file),
+                                                os.path.join(self.output_annotation_path, annotation_file),
+                                                os.path.join(self.output_images_path, image_file), dim, ratio)
 
     @staticmethod
     def resize_image(input_image, output_image, new_width):
@@ -93,29 +81,15 @@ class Transformator(object):
 if __name__ == '__main__':
     log.info('Transformator - start')
     parser = argparse.ArgumentParser(description='Transformator')
-    parser.add_argument('-i',
-                        '--input_path',
-                        help='name of the input path',
-                        required=True)
-    parser.add_argument('-o',
-                        '--output_path',
-                        help='name of the output folder',
-                        required=True)
-    parser.add_argument('-a',
-                        '--annotation_path',
-                        help='name of the annotations folder',
-                        required=True)
-    parser.add_argument('-w',
-                        '--width',
-                        help='width for the new size',
-                        required=False,
-                        default=600)
+    parser.add_argument('-i', '--input_path', help='name of the input path', required=True)
+    parser.add_argument('-o', '--output_path', help='name of the output folder', required=True)
+    parser.add_argument('-a', '--annotation_path', help='name of the annotations folder', required=True)
+    parser.add_argument('-w', '--width', help='width for the new size', required=False, default=600)
 
     args = parser.parse_args()
     log.info("Got the following args: {}".format(args))
 
-    trafo = Transformator(args.input_path, args.output_path,
-                          args.annotation_path, args.width)
+    trafo = Transformator(args.input_path, args.output_path, args.annotation_path, args.width)
     trafo.resize()
 
     log.info('Transformator - end')
