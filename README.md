@@ -12,7 +12,9 @@
 
 `pip install opencv-python`
 
-`pip install yapf`
+`pip install pillow`
+
+`pip install black`
 
 ### object detection api
 

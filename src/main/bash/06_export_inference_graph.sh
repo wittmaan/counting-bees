@@ -2,7 +2,7 @@
 
 INPUT_TYPE=image_tensor
 PIPELINE_CONFIG_PATH=../../../data/training/faster_rcnn_resnet101/pipeline.config
-TRAINED_CKPT_PREFIX=../../../data/training/faster_rcnn_resnet101/model.ckpt-10384
+TRAINED_CKPT_PREFIX=../../../data/training/faster_rcnn_resnet101/model.ckpt-200000
 EXPORT_DIR=../../../data/training/faster_rcnn_resnet101
 
 python j:/models/research/object_detection/export_inference_graph.py \
