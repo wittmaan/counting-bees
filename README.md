@@ -6,7 +6,8 @@
 
 `conda create --name tensorflow python=3.6`
 
-`pip install tensorflow`
+`pip install tensorflow-gpu`
+`pip install --upgrade tf_slim`
  
 `pip install pandas`
 
@@ -14,17 +15,32 @@
 
 `pip install pillow`
 
+`pip install Cython`
+
+`pip install pycocotools`
+
 `pip install black`
 
 ### object detection api
 
 `git clone https://github.com/tensorflow/models.git`
 
+
+`sudo apt install protobuf-compiler`
+
+in models/research run
+
+`protoc object_detection/protos/*.proto --python_out=.`
+
+
 follow the instructions from here 
 
 `https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md`
 
 additionally add `PYTHONPATH` variable to `PATH` variable.
+
+run `(tensorflow-gpu) c:\Users\a.wittmann\Documents\misc\models\research>python setup.py install`
+
 
 ### google cloud
 

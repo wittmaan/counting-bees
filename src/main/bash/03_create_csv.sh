@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python ../python/CSVCreator.py -i ../../../data/resized/annotations -o ../../../data/resized
+python ../python/csv_creator.py -i ../../../data/resized/annotations -o ../../../data/resized

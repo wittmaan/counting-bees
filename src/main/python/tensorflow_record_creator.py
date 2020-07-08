@@ -1,10 +1,11 @@
 import logging.config
 import argparse
-import os
+from io import BytesIO
+from os import path
+
 import pandas as pd
 import tensorflow as tf
 from object_detection.utils import dataset_util
-import io
 import PIL.Image
 
 logging.config.fileConfig(fname="../resources/logging.conf", disable_existing_loggers=False)
@@ -18,7 +19,7 @@ class TensorflowRecordCreator(object):
         self.images_path = images_path
 
     def run(self):
-        tf_writer = tf.python_io.TFRecordWriter(self.output_file)
+        tf_writer = tf.io.TFRecordWriter(self.output_file)
         for group in self.annotations.groupby("filename"):
             tf_example = self.create_tf_example(group, self.images_path)
             tf_writer.write(tf_example.SerializeToString())
@@ -28,9 +29,9 @@ class TensorflowRecordCreator(object):
     def create_tf_example(grouped, images_path):
         filename, group = grouped
 
-        with tf.gfile.GFile(os.path.join(images_path, filename), "rb") as fid:
+        with tf.io.gfile.GFile(path.join(images_path, filename), "rb") as fid:
             encoded_jpg = fid.read()
-        encoded_jpg_io = io.BytesIO(encoded_jpg)
+        encoded_jpg_io = BytesIO(encoded_jpg)
         image = PIL.Image.open(encoded_jpg_io)
         width, height = image.size
 

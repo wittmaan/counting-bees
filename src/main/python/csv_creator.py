@@ -1,8 +1,9 @@
 import logging.config
 import argparse
-import os
+from os import path, listdir
+
 import pandas as pd
-import xml.etree.ElementTree as etree
+import xml.etree.ElementTree as ET
 
 logging.config.fileConfig(fname="../resources/logging.conf", disable_existing_loggers=False)
 log = logging.getLogger("csv_creator")
@@ -10,17 +11,15 @@ log = logging.getLogger("csv_creator")
 
 class CSVCreator(object):
     def __init__(self, input_path, output_path):
-        self.annotation_files = [os.path.join(input_path, f) for f in os.listdir(input_path) if f.endswith("xml")]
+        self.annotation_files = [path.join(input_path, f) for f in listdir(input_path) if f.endswith("xml")]
         self.output_path = output_path
         self.result = None
 
     def run(self):
         self.result = pd.DataFrame()
-        # import random
-        # self.annotation_files = random.sample(self.annotation_files, 10)
 
         for annotation_file in self.annotation_files:
-            xml_root = etree.parse(annotation_file).getroot()
+            xml_root = ET.parse(annotation_file).getroot()
             size_node = xml_root.find("size")
 
             for member in xml_root.findall("object"):
@@ -29,7 +28,7 @@ class CSVCreator(object):
                 self.result = self.result.append(
                     pd.DataFrame(
                         {
-                            "filename": os.path.basename(annotation_file.replace(".xml", ".jpg")),
+                            "filename": path.basename(annotation_file.replace(".xml", ".jpg")),
                             "width": size_node.find("width").text,
                             "height": size_node.find("height").text,
                             "xmin": bndbox.find("xmin").text,
@@ -42,12 +41,11 @@ class CSVCreator(object):
                     )
                 )
 
-        self.result.to_csv(os.path.join(self.output_path, "annotations.csv"), index=False)
+        self.result.to_csv(path.join(self.output_path, "annotations.csv"), index=False)
 
     def split_train_test(self):
         grouped = self.result.groupby("filename")
         train_size = int(len(self.result) * 0.8)
-        # test_size = len(self.result) - train_size
 
         group_size = 0
         train_df = pd.DataFrame()
@@ -60,8 +58,8 @@ class CSVCreator(object):
 
         test_filenames = set(self.result["filename"]).difference(set(train_df["filename"]))
         test_df = self.result[self.result["filename"].isin(test_filenames)]
-        train_df.to_csv(os.path.join(self.output_path, "annotations_train.csv"), index=False)
-        test_df.to_csv(os.path.join(self.output_path, "annotations_test.csv"), index=False)
+        train_df.to_csv(path.join(self.output_path, "annotations_train.csv"), index=False)
+        test_df.to_csv(path.join(self.output_path, "annotations_test.csv"), index=False)
         log.info("split_train_test done")
 
 
