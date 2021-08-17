@@ -12,7 +12,7 @@ from torch.optim.sgd import SGD
 from torch.utils.data.dataloader import DataLoader
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
-from common.util import collate_fn, EarlyStopping
+from common.util import collate_fn, EarlyStopping, worker_init_fn
 from dataset import BeeDataset
 from engine import train_one_epoch, evaluate
 
@@ -69,6 +69,7 @@ class BeeTrainingApp(object):
             pin_memory=self.cuda_is_available,
             shuffle=True,
             collate_fn=collate_fn,
+            worker_init_fn=worker_init_fn,
         )
         log.info(f"initialized data_loader for {data_type}")
         return data_loader

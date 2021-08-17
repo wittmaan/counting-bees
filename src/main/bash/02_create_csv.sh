@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python ../python/csv_creator.py -i ../../../data/raw/annotations -o ../../../data/raw
+python ../python/csv_creator.py -i ../../../data/raw -o ../../../data/raw

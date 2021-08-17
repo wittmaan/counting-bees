@@ -3,6 +3,7 @@ import logging.config
 import xml.etree.ElementTree as ET
 from os import path, listdir
 
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -12,13 +13,29 @@ log = logging.getLogger("csv_creator")
 
 class CSVCreator(object):
     def __init__(self, input_path, output_path):
-        self.annotation_files = [path.join(input_path, f) for f in listdir(input_path) if f.endswith("xml")]
+        annotations_path = path.join(input_path, "annotations")
+        self.images_path = path.join(input_path, "images")
+
+        self.annotation_files = [path.join(annotations_path, f) for f in listdir(annotations_path) if f.endswith("xml")]
+        self.image_files = [path.join(self.images_path, f) for f in listdir(self.images_path)]
         self.output_path = output_path
         self.df = None
 
     def run(self):
-        self.df = pd.DataFrame()
+        self.match_annotations_to_images()
+        self.find_images_without_annotations()
 
+    def find_images_without_annotations(self):
+        annotation_files_with_image_extension = [
+            _.replace(".xml", ".jpg") for _ in [path.basename(_) for _ in self.annotation_files]
+        ]
+        image_files = [path.basename(_) for _ in self.image_files]
+        image_files_without_annotation = sorted(np.setdiff1d(image_files, annotation_files_with_image_extension))
+        df = pd.DataFrame(image_files_without_annotation, columns=["file_name"])
+        df.to_csv(path.join(self.output_path, "files_without_annotations.csv"), index=False)
+
+    def match_annotations_to_images(self):
+        self.df = pd.DataFrame()
         for annotation_file in self.annotation_files:
             xml_root = ET.parse(annotation_file).getroot()
             size_node = xml_root.find("size")
@@ -44,10 +61,12 @@ class CSVCreator(object):
 
     def split_train_valid(self):
         file_names = list(self.df["file_name"])
+        # detect files which are from single recorded images
         image_file_names = [_ for _ in file_names if "Image" in _]
         file_names = [_ for _ in file_names if _ not in image_file_names]
 
         train_file_names, valid_file_names = train_test_split(list(set(file_names)), test_size=0.2, random_state=0)
+        # put all single recorded images to the train data set
         train_file_names = set(image_file_names + train_file_names)
 
         df_train = self.df[self.df["file_name"].isin(train_file_names)]

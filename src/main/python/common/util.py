@@ -13,6 +13,10 @@ def collate_fn(batch):
     return tuple(zip(*batch))
 
 
+def worker_init_fn(worker_id):
+    np.random.seed(np.random.get_state()[1][0] + worker_id)
+
+
 class AverageMeter(object):
     def __init__(self):
         self.val = 0
