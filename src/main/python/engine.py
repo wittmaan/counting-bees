@@ -17,7 +17,7 @@ MB = 1024.0 * 1024.0
 def train_one_epoch(
     model, optimizer, data_loader: torch.utils.data.DataLoader, device, epoch, epochs, lr_scheduler, print_freq
 ):
-    model.detector()
+    model.train()
     loss_average = AverageMeter()
 
     for i, (images, targets, file_names) in enumerate(data_loader):
