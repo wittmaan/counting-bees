@@ -22,6 +22,8 @@ def train_one_epoch(
 
     for i, (images, targets, file_names) in enumerate(data_loader):
         log.debug(f"file_names {file_names}")
+        log.debug(f"images {images}")
+        log.debug(f"targets {targets}")
 
         images = list(image.to(device) for image in images)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
