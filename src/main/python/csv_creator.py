@@ -31,8 +31,11 @@ class CSVCreator(object):
         ]
         image_files = [path.basename(_) for _ in self.image_files]
         image_files_without_annotation = sorted(np.setdiff1d(image_files, annotation_files_with_image_extension))
-        df = pd.DataFrame(image_files_without_annotation, columns=["file_name"])
-        df.to_csv(path.join(self.output_path, "files_without_annotations.csv"), index=False)
+        df_without_annotation = pd.DataFrame(image_files_without_annotation, columns=["file_name"])
+        df_without_annotation.to_csv(path.join(self.output_path, "files_without_annotations.csv"), index=False)
+
+        df_with_annotation = pd.DataFrame(annotation_files_with_image_extension, columns=["file_name"])
+        df_with_annotation.to_csv(path.join(self.output_path, "files_with_annotations.csv"), index=False)
 
     def match_annotations_to_images(self):
         self.df = pd.DataFrame()
