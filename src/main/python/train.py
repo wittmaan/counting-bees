@@ -31,7 +31,9 @@ class BeeTrainingApp(object):
         self.optimizer = self.init_optimizer()
 
     def init_model(self):
-        model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True, box_detections_per_img=1000)
+        model = torchvision.models.detection.fasterrcnn_resnet50_fpn(
+            pretrained=False, pretrained_backbone=True, box_detections_per_img=1000
+        )
         num_classes = 2  # 1 class (bee) + background
         in_features = model.roi_heads.box_predictor.cls_score.in_features
         model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
